@@ -1,0 +1,42 @@
+version: '3.8' # specify docker-compose version
+services: # services to run
+  annoy-db: # name of the first service
+    build: 
+      context: . # specify the directory of the Dockerfile
+      dockerfile: Dockerfile-api # specify the Dockerfile name
+    ports:
+      - "5000:5000" # specify port mapping
+    volumes:
+      - "./rec_imdb.ann:/app/rec_imdb.ann"
+      - "./annoy_api.py:/app/annoy_api.py"
+      
+  gradio-app:
+    build:
+      context: . # specify the directory of the Dockerfile
+      dockerfile: Dockerfile-gradio # specify the Dockerfile name
+    ports:
+      - "7860:7860" # specify port mapping
+    depends_on:
+      - annoy-db # specify service dependencies
+      - annoy-db1
+      - annoy-db2
+    volumes:
+      - "./rec_syst1/:/app/"
+  annoy-db1: 
+    build: 
+      context: . # specify the directory of the Dockerfile
+      dockerfile: Dockerfile-bow # specify the Dockerfile name
+    ports:
+      - "5005:5005" # specify port mapping
+    volumes:
+      - "./bag_ofword.ann:/app/bag_ofword.ann"
+      - "./annoy_bow.py:/app/annoy_bow.py"
+  annoy-db2: 
+    build: 
+      context: . # specify the directory of the Dockerfile
+      dockerfile: Dockerfile-bert # specify the Dockerfile name
+    ports:
+      - "5006:5006" # specify port mapping
+    volumes:
+      - "./Bert_emb.ann:/app/Bert_emb.ann"
+      - "./annoy_bert.py:/app/annoy_bert.py"
